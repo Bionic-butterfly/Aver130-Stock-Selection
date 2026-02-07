@@ -14,6 +14,9 @@ import sys
 sys.path.append('../quant_core')
 from config import DATA_DIR, MODEL_DIR
 
+# 【优化新增】导入高级API接口
+from api_advanced import router as advanced_router
+
 app = FastAPI(
     title="沪深300多因子选股系统API",
     description="基于行业中性化+XGBoost的多因子选股系统后端API",
@@ -28,6 +31,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 【优化新增】注册高级API路由
+app.include_router(advanced_router)
 
 # 数据模型定义
 class FactorICResponse(BaseModel):

@@ -1,0 +1,135 @@
+# 沪深300多因子选股系统 - 高级配置文件
+# 【优化新增】统一管理所有实验参数
+
+# 基础配置
+basic:
+  project_name: "沪深300多因子选股系统"
+  version: "2.0"
+  start_date: "2019-01-01"
+  end_date: "2026-02-05"
+  description: "基于XGBoost的行业中性多因子选股模型"
+
+# 数据配置
+data:
+  data_dir: "../data"
+  models_dir: "../models"
+  logs_dir: "../logs"
+  hs300_constituents_file: "hs300_constituents.csv"
+  training_data_file: "training_data.csv"
+  processed_data_file: "processed_data.csv"
+  prediction_results_file: "prediction_results.csv"
+  industry_factor_analysis_file: "industry_factor_analysis.csv"
+  backtest_results_file: "backtest_results.csv"
+  backtest_results_advanced_file: "backtest_results_advanced.csv"
+  model_parameter_results_file: "model_parameter_results.csv"
+  risk_metrics_file: "risk_metrics.csv"
+  data_quality_report_file: "data_quality_report.json"
+
+# 因子配置
+factors:
+  selected_factors:
+    - "pe_ttm"
+    - "pb_lf"
+    - "roe"
+    - "turnover_rate"
+    - "total_mv"
+  factor_names:
+    pe_ttm: "市盈率(TTM)"
+    pb_lf: "市净率(LF)"
+    roe: "净资产收益率"
+    turnover_rate: "换手率"
+    total_mv: "总市值"
+  winsorize:
+    lower: 0.05
+    upper: 0.95
+  standardize:
+    enabled: true
+  industry_neutralization:
+    enabled: true
+  industry_standardization:
+    enabled: true  # 分行业独立标准化
+
+# 行业分类配置
+industry:
+  industry_map:
+    银行: "金融"
+    非银金融: "金融"
+    房地产: "房地产"
+    医药生物: "医药"
+    食品饮料: "消费"
+    家用电器: "消费"
+    汽车: "制造"
+    电子: "科技"
+    计算机: "科技"
+    通信: "科技"
+    传媒: "传媒"
+    建筑装饰: "建筑"
+    钢铁: "材料"
+    有色金属: "材料"
+    化工: "材料"
+    公用事业: "公用事业"
+    交通运输: "交通"
+    农林牧渔: "农业"
+    国防军工: "军工"
+    机械设备: "制造"
+    电气设备: "制造"
+    轻工制造: "制造"
+    商业贸易: "商业"
+    休闲服务: "服务"
+    综合: "综合"
+
+# 模型配置
+model:
+  type: "xgboost"
+  params:
+    max_depth: 6
+    learning_rate: 0.1
+    n_estimators: 100
+    subsample: 0.8
+    colsample_bytree: 0.8
+    random_state: 42
+  tuning:
+    enabled: true
+    param_grid:
+      learning_rate: [0.05, 0.1, 0.2]
+      n_estimators: [50, 100, 150]
+    cv_folds: 5
+    scoring: "r2"
+
+# 回测配置
+backtest:
+  top_n_list: [30, 50, 100]
+  frequency:
+    - "monthly"
+    - "quarterly"
+  market_regimes:
+    - "bull"
+    - "bear"
+    - "neutral"
+  risk_free_rate: 0.025
+  benchmark: "hs300"
+
+# 时间序列划分
+time_split:
+  train_start: "2019-01-01"
+  train_end: "2022-12-31"
+  test_start: "2023-01-01"
+  test_end: "2025-12-31"
+  validation_split: 0.2
+
+# 日志配置
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(message)s"
+  datefmt: "%Y-%m-%d %H:%M:%S"
+  file_handler_enabled: true
+  console_handler_enabled: true
+
+# 系统配置
+system:
+  use_mock_data: true  # 使用模拟数据（实际部署时设为false）
+  parallel_processing:
+    enabled: false
+    n_jobs: -1
+  cache_enabled: true
+  cache_dir: "../cache"

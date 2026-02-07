@@ -63,11 +63,21 @@
       <template #header>
         <div class="card-header">
           <span>详细选股列表</span>
-          <el-input 
-            v-model="searchText" 
-            placeholder="搜索股票代码或行业" 
-            style="width: 200px" 
-            clearable />
+          <div class="filter-container">
+            <el-select v-model="selectedIndustry" placeholder="按行业筛选" size="small" style="margin-right: 10px" clearable>
+              <el-option v-for="industry in industries" :key="industry" :label="industry" :value="industry"></el-option>
+            </el-select>
+            <el-select v-model="sortBy" placeholder="按因子值排序" size="small" style="margin-right: 10px">
+              <el-option label="默认排名" value="predicted_rank"></el-option>
+              <el-option label="预测收益率↑" value="predicted_return_desc"></el-option>
+              <el-option label="预测收益率↓" value="predicted_return_asc"></el-option>
+            </el-select>
+            <el-input 
+              v-model="searchText" 
+              placeholder="搜索股票代码" 
+              style="width: 150px" 
+              clearable />
+          </div>
         </div>
       </template>
       
@@ -124,15 +134,45 @@ use([
 const selectedStocks = ref([])
 const loading = ref(false)
 const searchText = ref('')
+const selectedIndustry = ref('')
+const sortBy = ref('predicted_rank')
 
 // 计算属性
+const industries = computed(() => {
+  const industrySet = new Set(selectedStocks.value.map(stock => stock.industry))
+  return Array.from(industrySet).sort()
+})
+
 const filteredStocks = computed(() => {
-  if (!searchText.value) return selectedStocks.value
+  let result = [...selectedStocks.value]
   
-  return selectedStocks.value.filter(stock => 
-    stock.ts_code.includes(searchText.value) ||
-    stock.industry.includes(searchText.value)
-  )
+  // 按行业筛选
+  if (selectedIndustry.value) {
+    result = result.filter(stock => stock.industry === selectedIndustry.value)
+  }
+  
+  // 按搜索词筛选
+  if (searchText.value) {
+    result = result.filter(stock => 
+      stock.ts_code.includes(searchText.value)
+    )
+  }
+  
+  // 按因子值排序
+  switch (sortBy.value) {
+    case 'predicted_return_desc':
+      result.sort((a, b) => b.predicted_return - a.predicted_return)
+      break
+    case 'predicted_return_asc':
+      result.sort((a, b) => a.predicted_return - b.predicted_return)
+      break
+    case 'predicted_rank':
+    default:
+      result.sort((a, b) => a.predicted_rank - b.predicted_rank)
+      break
+  }
+  
+  return result
 })
 
 const positiveRatio = computed(() => {
@@ -287,6 +327,11 @@ const loadSampleData = () => {
   align-items: center;
   font-weight: bold;
   font-size: 16px;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
 }
 
 .summary-item {

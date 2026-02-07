@@ -61,6 +61,52 @@ export const apiService = {
   // 自定义预测
   predictCustomStocks(factorData) {
     return api.post('/predict/custom', factorData)
+  },
+  
+  // 高级API接口
+  // 因子分行业分析
+  getFactorIndustryAnalysis(params = {}) {
+    return api.get('/advanced/factor-industry-analysis', { params })
+  },
+  
+  // 风险指标详情
+  getRiskMetrics() {
+    return api.get('/advanced/risk-metrics')
+  },
+  
+  // 模型参数调优结果
+  getModelTuningResults(topN = 10) {
+    return api.get('/advanced/model-tuning-results', { params: { top_n: topN } })
+  },
+  
+  // 多场景回测结果
+  getBacktestScenarios(params = {}) {
+    return api.get('/advanced/backtest-scenarios', { params })
+  },
+  
+  // 训练日志
+  getTrainingLogs(params = {}) {
+    return api.get('/advanced/training-logs', { params })
+  },
+  
+  // 配置参数
+  getConfigParameters() {
+    return api.get('/advanced/config-parameters')
+  },
+  
+  // 数据质量报告
+  getDataQualityReport() {
+    return api.get('/advanced/data-quality-report')
+  },
+  
+  // 回测摘要
+  getBacktestSummary() {
+    return api.get('/advanced/backtest-summary')
+  },
+  
+  // 系统状态
+  getAdvancedSystemStatus() {
+    return api.get('/advanced/system-status')
   }
 }
 

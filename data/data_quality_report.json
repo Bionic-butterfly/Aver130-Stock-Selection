@@ -1,0 +1,63 @@
+{
+  "report_date": "2026-02-07 01:01:07",
+  "data_summary": {
+    "total_records": 21600,
+    "unique_stocks": 300,
+    "unique_industries": 25,
+    "date_range": {
+      "start": 20180131,
+      "end": 20231231
+    }
+  },
+  "factor_quality": {
+    "pe_ttm": {
+      "mean": 27.613805352526228,
+      "std": 12.99041270586108,
+      "min": 5.001185916261827,
+      "max": 49.99736707402769,
+      "missing_values": 0
+    },
+    "pb_lf": {
+      "mean": 4.22862569702455,
+      "std": 2.169163003639952,
+      "min": 0.5005440235027074,
+      "max": 7.9993360839320395,
+      "missing_values": 0
+    },
+    "roe": {
+      "mean": 0.17495789325615646,
+      "std": 0.07187982467423372,
+      "min": 0.0500133429833345,
+      "max": 0.2999866921929315,
+      "missing_values": 0
+    },
+    "turnover_rate": {
+      "mean": 0.054978051417425594,
+      "std": 0.02595195494506554,
+      "min": 0.010004270747574286,
+      "max": 0.09999581865714786,
+      "missing_values": 0
+    },
+    "total_mv": {
+      "mean": 502690444836.156,
+      "std": 287921771529.47235,
+      "min": 1016200294.0348517,
+      "max": 999940049150.5166,
+      "missing_values": 0
+    }
+  },
+  "data_integrity": {
+    "missing_values": {
+      "trade_date": 0,
+      "ts_code": 0,
+      "industry": 0,
+      "future_return": 0,
+      "pe_ttm": 0,
+      "pb_lf": 0,
+      "roe": 0,
+      "turnover_rate": 0,
+      "total_mv": 0
+    },
+    "duplicate_records": 0
+  }
+}

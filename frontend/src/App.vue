@@ -1,155 +1,194 @@
 <template>
   <div id="app">
     <el-container class="app-container">
-      <!-- 头部导航 -->
-      <el-header class="app-header">
-        <div class="header-content">
-          <h1 class="title">
-            <el-icon><TrendCharts /></el-icon>
-            沪深300多因子选股系统
-          </h1>
-          <div class="nav-tabs">
-            <el-tabs v-model="activeTab" @tab-click="handleTabClick">
-              <el-tab-pane label="数据概览" name="overview"></el-tab-pane>
-              <el-tab-pane label="因子分析" name="factors"></el-tab-pane>
-              <el-tab-pane label="模型预测" name="predictions"></el-tab-pane>
-              <el-tab-pane label="选股结果" name="results"></el-tab-pane>
-              <el-tab-pane label="回测对比" name="backtest"></el-tab-pane>
-            </el-tabs>
-          </div>
+      <!-- 侧边栏导航 -->
+      <el-aside width="250px" class="sidebar">
+        <div class="logo">
+          <h2>沪深300多因子选股</h2>
+          <p>高级分析系统</p>
         </div>
-      </el-header>
-
+        
+        <el-menu
+          :default-active="$route.path"
+          router
+          class="sidebar-menu"
+          background-color="#304156"
+          text-color="#bfcbd9"
+          active-text-color="#409EFF"
+        >
+          <el-menu-item index="/">
+            <el-icon><House /></el-icon>
+            <span>系统概览</span>
+          </el-menu-item>
+          
+          <el-sub-menu index="factor">
+            <template #title>
+              <el-icon><TrendCharts /></el-icon>
+              <span>因子分析</span>
+            </template>
+            <el-menu-item index="/factor-industry">
+              <el-icon><DataAnalysis /></el-icon>
+              <span>分行业分析</span>
+            </el-menu-item>
+          </el-sub-menu>
+          
+          <el-sub-menu index="model">
+            <template #title>
+              <el-icon><Cpu /></el-icon>
+              <span>模型训练</span>
+            </template>
+            <el-menu-item index="/model-tuning">
+              <el-icon><Setting /></el-icon>
+              <span>参数调优</span>
+            </el-menu-item>
+          </el-sub-menu>
+          
+          <el-sub-menu index="backtest">
+            <template #title>
+              <el-icon><Histogram /></el-icon>
+              <span>回测分析</span>
+            </template>
+            <el-menu-item index="/risk-metrics">
+              <el-icon><Monitor /></el-icon>
+              <span>风险指标</span>
+            </el-menu-item>
+          </el-sub-menu>
+          
+          <el-menu-item index="/logs">
+            <el-icon><Document /></el-icon>
+            <span>运行日志</span>
+          </el-menu-item>
+        </el-menu>
+      </el-aside>
+      
       <!-- 主内容区域 -->
-      <el-main class="app-main">
-        <!-- 数据概览页面 -->
-        <div v-if="activeTab === 'overview'" class="page-content">
-          <DataOverview />
-        </div>
-
-        <!-- 因子分析页面 -->
-        <div v-if="activeTab === 'factors'" class="page-content">
-          <FactorAnalysis />
-        </div>
-
-        <!-- 模型预测页面 -->
-        <div v-if="activeTab === 'predictions'" class="page-content">
-          <ModelPredictions />
-        </div>
-
-        <!-- 选股结果页面 -->
-        <div v-if="activeTab === 'results'" class="page-content">
-          <StockResults />
-        </div>
-
-        <!-- 回测对比页面 -->
-        <div v-if="activeTab === 'backtest'" class="page-content">
-          <BacktestComparison />
-        </div>
-      </el-main>
-
-      <!-- 底部信息 -->
-      <el-footer class="app-footer">
-        <div class="footer-content">
-          <span>沪深300多因子选股系统 - 毕业设计项目</span>
-          <span>基于行业中性化+XGBoost算法</span>
-        </div>
-      </el-footer>
+      <el-container>
+        <el-header class="header">
+          <div class="header-content">
+            <div class="breadcrumb">
+              <el-breadcrumb separator="/">
+                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>{{ currentRouteName }}</el-breadcrumb-item>
+              </el-breadcrumb>
+            </div>
+            <div class="user-info">
+              <el-button type="primary" @click="runQuantCore">
+                <el-icon><VideoPlay /></el-icon>
+                运行量化核心
+              </el-button>
+            </div>
+          </div>
+        </el-header>
+        
+        <el-main class="main-content">
+          <router-view />
+        </el-main>
+      </el-container>
     </el-container>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
+<script>
+import { ref, computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import DataOverview from './components/DataOverview.vue'
-import FactorAnalysis from './components/FactorAnalysis.vue'
-import ModelPredictions from './components/ModelPredictions.vue'
-import StockResults from './components/StockResults.vue'
-import BacktestComparison from './components/BacktestComparison.vue'
 
-// 响应式数据
-const activeTab = ref('overview')
-
-// 生命周期
-onMounted(() => {
-  console.log('应用已加载')
-})
-
-// 方法
-const handleTabClick = (tab) => {
-  console.log('切换到标签:', tab.paneName)
+export default {
+  name: 'App',
+  setup() {
+    const route = useRoute()
+    
+    const currentRouteName = computed(() => {
+      const routeNames = {
+        '/': '系统概览',
+        '/factor-industry': '因子分行业分析',
+        '/model-tuning': '模型参数调优',
+        '/risk-metrics': '风险指标详情',
+        '/logs': '运行日志'
+      }
+      return routeNames[route.path] || '未知页面'
+    })
+    
+    const runQuantCore = async () => {
+      try {
+        ElMessage.info('正在运行量化核心，请稍候...')
+        // 这里可以调用后端API运行量化核心
+        // 实际实现需要与后端集成
+        setTimeout(() => {
+          ElMessage.success('量化核心运行完成')
+        }, 2000)
+      } catch (error) {
+        ElMessage.error('运行量化核心失败')
+      }
+    }
+    
+    return {
+      currentRouteName,
+      runQuantCore
+    }
+  }
 }
 </script>
 
-<style scoped>
-.app-container {
+<style>
+#app {
   height: 100vh;
-  background: #f5f7fa;
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
 }
 
-.app-header {
-  background: #fff;
-  border-bottom: 1px solid #e4e7ed;
+.app-container {
+  height: 100%;
+}
+
+.sidebar {
+  background-color: #304156;
+  height: 100%;
+}
+
+.logo {
+  padding: 20px;
+  text-align: center;
+  color: #fff;
+  border-bottom: 1px solid #475669;
+}
+
+.logo h2 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+}
+
+.logo p {
+  margin: 0;
+  font-size: 12px;
+  color: #bfcbd9;
+}
+
+.sidebar-menu {
+  border: none;
+}
+
+.header {
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   padding: 0 20px;
-  display: flex;
-  align-items: center;
 }
 
 .header-content {
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 100%;
 }
 
-.title {
-  margin: 0;
-  color: #409eff;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.nav-tabs {
-  flex: 1;
-  margin-left: 40px;
-}
-
-:deep(.el-tabs__header) {
-  margin: 0;
-}
-
-:deep(.el-tabs__nav-wrap::after) {
-  display: none;
-}
-
-.app-main {
+.main-content {
   padding: 20px;
-  overflow-y: auto;
+  background-color: #f5f7fa;
 }
 
-.page-content {
+.page-container {
   background: #fff;
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 20px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  min-height: 600px;
-}
-
-.app-footer {
-  background: #fff;
-  border-top: 1px solid #e4e7ed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.footer-content {
-  display: flex;
-  gap: 40px;
-  color: #909399;
-  font-size: 14px;
 }
 </style>

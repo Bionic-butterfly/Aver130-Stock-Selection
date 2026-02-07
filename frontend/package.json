@@ -1,5 +1,5 @@
 {
-  "name": "hs300-quant-frontend",
+  "name": "hs300-factor-frontend",
   "version": "1.0.0",
   "description": "沪深300多因子选股系统前端",
   "type": "module",
@@ -11,11 +11,11 @@
   "dependencies": {
     "vue": "^3.3.4",
     "vue-router": "^4.2.4",
-    "element-plus": "^2.4.4",
+    "element-plus": "^2.3.8",
     "@element-plus/icons-vue": "^2.1.0",
-    "echarts": "^5.4.3",
+    "echarts": "^5.4.2",
     "vue-echarts": "^6.6.1",
-    "axios": "^1.6.2"
+    "axios": "^1.4.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",
